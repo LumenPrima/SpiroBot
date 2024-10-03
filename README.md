@@ -6,6 +6,18 @@ SpiroBot is a project that combines the artistic beauty of spirographs with mode
 
 SpiroBot is designed to create intricate spirograph patterns using a combination of software and hardware components. It allows users to design spirograph patterns digitally and then translate these designs into physical drawings using a robotic arm or CNC-like setup.
 
+## Screenshots
+
+### Early Design Concept
+![SpiroBot Early Design](./images/SpiroBot-early.svg)
+
+This image shows an early design concept for the SpiroBot application. It illustrates the basic layout and key components of the user interface.
+
+### Early Build
+![SpiroBot Early Build](./images/SpiroBot-earlybuild.png)
+
+This screenshot captures an early build of the SpiroBot application. It demonstrates the progress made in implementing the design and provides a glimpse of the actual user interface.
+
 ## Key Features
 
 - Digital spirograph pattern designer
@@ -19,6 +31,7 @@ SpiroBot is designed to create intricate spirograph patterns using a combination
 - `docs/`: Documentation files
 - `tests/`: Unit tests for the project
 - `resources/`: Additional resources and assets
+- `images/`: Screenshots and visual assets
 
 ## Prerequisites
 
