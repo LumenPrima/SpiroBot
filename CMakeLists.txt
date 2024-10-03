@@ -1,0 +1,37 @@
+cmake_minimum_required(VERSION 3.5)
+
+project(SpiroBot LANGUAGES CXX)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Find the Qt packages
+find_package(Qt6 COMPONENTS Widgets Svg REQUIRED)
+
+# Add your source files
+set(SOURCES
+    src/main.cpp
+    src/mainwindow.cpp
+    src/drawingarea.cpp
+    src/gcodegenerator.cpp
+    src/gcodeexportdialog.cpp
+    include/mainwindow.h
+    include/drawingarea.h
+    include/gcodegenerator.h
+    include/gcodeexportdialog.h
+)
+
+# Create the executable
+add_executable(${PROJECT_NAME} ${SOURCES})
+
+# Include directories
+target_include_directories(${PROJECT_NAME} PRIVATE include)
+
+# Link against Qt libraries
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt6::Widgets Qt6::Svg)
