@@ -13,6 +13,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find the Qt packages
 find_package(Qt6 COMPONENTS Widgets Svg REQUIRED)
+message(STATUS "Qt version: ${Qt6_VERSION}")
+get_target_property(QtCore_INCLUDE_DIRS Qt6::Core INTERFACE_INCLUDE_DIRECTORIES)
+message(STATUS "Qt6 Core include dirs: ${QtCore_INCLUDE_DIRS}")
 
 # Add your source files
 set(SOURCES

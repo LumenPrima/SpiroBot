@@ -6,9 +6,10 @@
 #include <QSpinBox>
 #include <QLabel>
 #include <QDoubleSpinBox>
+#include <QPushButton>
+#include <QTimer>
 
 class DrawingArea;
-class GcodeGenerator;  // Forward declaration
 
 class MainWindow : public QMainWindow
 {
@@ -25,9 +26,13 @@ private slots:
     void exportToGcode();
     void updateAnalysis();
     void updateValueLabels();
+    void updateAnimation();
+    void on_closeLoopButton_clicked();
+    void on_animateButton_clicked();
 
 private:
     void setupUI();
+    int calculateRotationsToCloseLoop(int outerRadius, int innerRadius);
 
     DrawingArea *drawingArea;
     QSlider *outerRadiusSlider;
@@ -42,10 +47,11 @@ private:
     QLabel *outerRadiusValueLabel;
     QLabel *innerRadiusValueLabel;
     QLabel *penOffsetValueLabel;
-    //QLabel *rotationsValueLabel;
-    //QLabel *lineThicknessValueLabel;
-    //QLabel *numPensValueLabel;
-    //QLabel *rotationOffsetValueLabel;
+    QPushButton *closeLoopButton;
+    QPushButton *animateButton;
+    QTimer *animationTimer;
+    int currentStep;
+    int totalRotations;
 };
 
 #endif // MAINWINDOW_H

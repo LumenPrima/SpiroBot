@@ -7,6 +7,8 @@
 #include <QFile>
 #include <QTextStream>
 #include <QLineF>
+#include <QtMath>
+
 
 
 class DrawingArea::DrawingAreaPrivate
@@ -53,23 +55,68 @@ void DrawingArea::generateSpirograph()
     spirographPaths.clear();
     spirographPaths.resize(numPens);
 
+    double outerRadiusD = static_cast<double>(outerRadius);
+    double innerRadiusD = static_cast<double>(innerRadius);
+    double penOffsetD = static_cast<double>(penOffset);
     double rotationOffsetRad = rotationOffset * M_PI / 180.0;
 
     for (int pen = 0; pen < numPens; ++pen) {
         QPainterPath &path = spirographPaths[pen];
         path = QPainterPath();
 
-        double t = 0;
+        double t = 0.0;
         double stepSize = 0.01;
         int maxSteps = static_cast<int>(2 * M_PI / stepSize) * rotations;
         
         double penAngleOffset = 2 * M_PI * pen / numPens + rotationOffsetRad;
 
         for (int i = 0; i <= maxSteps; ++i) {
-            double x = (outerRadius - innerRadius) * cos(t) + 
-                       penOffset * cos((outerRadius - innerRadius) * t / innerRadius + penAngleOffset);
-            double y = (outerRadius - innerRadius) * sin(t) - 
-                       penOffset * sin((outerRadius - innerRadius) * t / innerRadius + penAngleOffset);
+            double x = (outerRadiusD - innerRadiusD) * qCos(t) + 
+                       penOffsetD * qCos(((outerRadiusD - innerRadiusD) * t / innerRadiusD) + penAngleOffset);
+            double y = (outerRadiusD - innerRadiusD) * qSin(t) - 
+                       penOffsetD * qSin(((outerRadiusD - innerRadiusD) * t / innerRadiusD) + penAngleOffset);
+
+            if (i == 0) {
+                path.moveTo(x, y);
+            } else {
+                path.lineTo(x, y);
+            }
+
+            t += stepSize;
+        }
+    }
+
+    calculateBoundingBoxAndZoom();
+    update();
+    emit spirographUpdated();
+}
+
+
+void DrawingArea::generateSpirographStep(int step)
+{
+    spirographPaths.clear();
+    spirographPaths.resize(numPens);
+
+    double outerRadiusD = static_cast<double>(outerRadius);
+    double innerRadiusD = static_cast<double>(innerRadius);
+    double penOffsetD = static_cast<double>(penOffset);
+    double rotationOffsetRad = rotationOffset * M_PI / 180.0;
+
+    for (int pen = 0; pen < numPens; ++pen) {
+        QPainterPath &path = spirographPaths[pen];
+        path = QPainterPath();
+
+        double t = 0.0;
+        double stepSize = 0.01;
+        int maxSteps = static_cast<int>(2 * M_PI / stepSize) * step;
+        
+        double penAngleOffset = 2 * M_PI * pen / numPens + rotationOffsetRad;
+
+        for (int i = 0; i <= maxSteps; ++i) {
+            double x = (outerRadiusD - innerRadiusD) * qCos(t) + 
+                       penOffsetD * qCos((outerRadiusD - innerRadiusD) * t / innerRadiusD + penAngleOffset);
+            double y = (outerRadiusD - innerRadiusD) * qSin(t) - 
+                       penOffsetD * qSin((outerRadiusD - innerRadiusD) * t / innerRadiusD + penAngleOffset);
 
             if (i == 0) {
                 path.moveTo(x, y);

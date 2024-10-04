@@ -12,13 +12,19 @@
 #include <QFileDialog>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QTimer>
+#include <cmath>
+#include <numeric>
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
+    : QMainWindow(parent), currentStep(0), totalRotations(0)
 {
     setWindowTitle("SpiroBot");
     resize(1400, 1200);
     setupUI();
+
+    animationTimer = new QTimer(this);
+    connect(animationTimer, &QTimer::timeout, this, &MainWindow::updateAnimation);
 }
 
 MainWindow::~MainWindow()
@@ -105,6 +111,16 @@ void MainWindow::setupUI()
     rotationOffsetLayout->addWidget(rotationOffsetSpinBox);
     controlsLayout->addLayout(rotationOffsetLayout);
 
+    // Add "Close the Loop" button
+    closeLoopButton = new QPushButton("Close the Loop", this);
+    controlsLayout->addWidget(closeLoopButton);
+    connect(closeLoopButton, &QPushButton::clicked, this, &MainWindow::on_closeLoopButton_clicked);
+
+    // Add "Animate" button
+    animateButton = new QPushButton("Animate", this);
+    controlsLayout->addWidget(animateButton);
+    connect(animateButton, &QPushButton::clicked, this, &MainWindow::on_animateButton_clicked);
+
     pathLengthLabel = new QLabel("Path Length: N/A", this);
     controlsLayout->addWidget(pathLengthLabel);
 
@@ -155,7 +171,7 @@ void MainWindow::setupUI()
     updateSpirograph();
 }
 
-
+/*
 void MainWindow::updateSpirograph()
 {
     drawingArea->setParameters(
@@ -171,6 +187,7 @@ void MainWindow::updateSpirograph()
     drawingArea->update();
     statusLabel->setText("Spirograph updated");
 }
+*/
 
 void MainWindow::exportToSVG()
 {
@@ -250,4 +267,65 @@ void MainWindow::updateValueLabels()
     outerRadiusValueLabel->setText(QString::number(outerRadiusSlider->value()));
     innerRadiusValueLabel->setText(QString::number(innerRadiusSlider->value()));
     penOffsetValueLabel->setText(QString::number(penOffsetSlider->value()));
+}
+
+void MainWindow::on_closeLoopButton_clicked()
+{
+    int outerRadius = outerRadiusSlider->value();
+    int innerRadius = innerRadiusSlider->value();
+
+    totalRotations = calculateRotationsToCloseLoop(outerRadius, innerRadius);
+    rotationsSpinBox->setValue(totalRotations);
+    
+    statusLabel->setText(QString("Closing loop with %1 rotations").arg(totalRotations));
+    updateSpirograph();
+}
+
+void MainWindow::on_animateButton_clicked()
+{
+    currentStep = 0;
+    totalRotations = rotationsSpinBox->value();
+    animationTimer->start(50);  // 20 FPS
+    statusLabel->setText("Animation started");
+}
+
+void MainWindow::updateAnimation()
+{
+    if (currentStep < totalRotations) {
+        rotationsSpinBox->setValue(currentStep + 1);
+        updateSpirograph();
+        currentStep++;
+    } else {
+        animationTimer->stop();
+        statusLabel->setText("Animation complete!");
+    }
+}
+
+int MainWindow::calculateRotationsToCloseLoop(int outerRadius, int innerRadius)
+{
+    int radiusDifference = outerRadius - innerRadius;
+    return std::lcm(radiusDifference, innerRadius) / radiusDifference;
+}
+
+// In updateSpirograph():
+void MainWindow::updateSpirograph()
+{
+    drawingArea->setParameters(
+        outerRadiusSlider->value(),
+        innerRadiusSlider->value(),
+        penOffsetSlider->value(),
+        rotationsSpinBox->value(),
+        lineThicknessSpinBox->value(),
+        numPensSpinBox->value(),
+        rotationOffsetSpinBox->value()
+    );
+    
+    if (animationTimer->isActive()) {
+        drawingArea->generateSpirographStep(rotationsSpinBox->value());
+    } else {
+        drawingArea->generateSpirograph();
+    }
+    
+    drawingArea->update();
+    statusLabel->setText("Spirograph updated");
 }

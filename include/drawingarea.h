@@ -19,6 +19,7 @@ public:
     void setParameters(int outerRadius, int innerRadius, int penOffset, int rotations,
                        double lineThickness, int numPens, double rotationOffset);
     void generateSpirograph();
+    void generateSpirographStep(int step);  // New method for incremental drawing
     bool exportToSVG(const QString &filename) const;
     bool exportToPNG(const QString &filename, int width = 0, int height = 0) const;
     bool exportToGcode(const QString &filename, const void* config) const;
