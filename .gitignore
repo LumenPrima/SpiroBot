@@ -41,3 +41,6 @@ Thumbs.db
 
 # Python virtual environment
 venv/
+
+# Generated gcode
+*.gcode

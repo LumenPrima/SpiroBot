@@ -260,10 +260,9 @@ bool DrawingArea::exportToPNG(const QString &filename, int width, int height) co
     return image.save(filename, "PNG");
 }
 
-bool DrawingArea::exportToGcode(const QString &filename, const void* config) const
+bool DrawingArea::exportToGcode(const QString &filename, const GcodeGenerator::Config& config) const
 {
-    const GcodeGenerator::Config* gcodeConfig = static_cast<const GcodeGenerator::Config*>(config);
-    return d_ptr->gcodeGenerator->generateGcode(spirographPaths, *gcodeConfig, filename);
+    return d_ptr->gcodeGenerator->generateGcode(spirographPaths, config, filename);
 }
 
 double DrawingArea::calculateTotalPathLength() const

@@ -1,7 +1,7 @@
 # SpiroBot
 
 <div style="background-color: #ffcccc; border: 2px solid #ff0000; padding: 10px; margin: 10px 0; font-size: 18px; color: #ff0000; font-weight: bold;">
-⚠️ WARNING: The G-code generation feature in this project is experimental. It probably won't work as expected and may potentially cause harm to your equipment or pets. Use at your own risk!
+⚠️ WARNING: The G-code generation feature in this project has been tested with a FluidNC-based drawing bot. However, it probably won't work until it has been adjusted for your particular machine. Use at your own risk. No refunds.
 </div>
 
 ## Project Overview
@@ -9,6 +9,10 @@
 SpiroBot is a project that combines the artistic beauty of spirographs with modern robotics and computer-aided design.
 
 SpiroBot is designed to create intricate spirograph patterns using a combination of software and hardware components. It allows users to design spirograph patterns digitally and then translate these designs into physical drawings using a robotic arm or CNC-like setup.
+
+## Configuration
+
+The `config.json` file can be configured to set default values for the application. Please refer to this file to customize the behavior of SpiroBot for your specific setup.
 
 ## Screenshots
 
@@ -25,7 +29,7 @@ This screenshot captures an early build of the SpiroBot application. It demonstr
 ## Key Features
 
 - Digital spirograph pattern designer
-- G-code generation for physical drawing
+- G-code generation for physical drawing (requires machine-specific adjustments)
 - Integration with robotic drawing systems
 
 ## Project Structure
@@ -36,6 +40,7 @@ This screenshot captures an early build of the SpiroBot application. It demonstr
 - `tests/`: Unit tests for the project
 - `resources/`: Additional resources and assets
 - `images/`: Screenshots and visual assets
+- `config.json`: Configuration file for default settings
 
 ## Prerequisites
 

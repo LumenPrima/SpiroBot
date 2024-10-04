@@ -1,20 +1,21 @@
-#include <QApplication>
+
+int main(int argc, char *argv[])
+{
+    qDebug() << "Starting application...";
 #include "mainwindow.h"
 #include <iostream>
 #include <stdexcept>
 
-int main(int argc, char *argv[])
-{
+    MainWindow w;
     std::cout << "Starting application..." << std::endl;
-    QApplication a(argc, argv);
+
     std::cout << "QApplication created" << std::endl;
-    
+    qDebug() << "MainWindow shown";
     try {
-        MainWindow w;
         std::cout << "MainWindow created" << std::endl;
-        w.show();
+    QTimer::singleShot(0, [&w]() {
+        qDebug() << "Triggering GCode export dialog...";
         std::cout << "MainWindow shown" << std::endl;
-        return a.exec();
     } catch (const std::exception& e) {
         std::cerr << "Exception caught: " << e.what() << std::endl;
         return 1;
@@ -22,4 +23,52 @@ int main(int argc, char *argv[])
         std::cerr << "Unknown exception caught" << std::endl;
         return 1;
     }
-}
+    } catch (const std::exception& e) {
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+        return 1;
+    } catch (...) {
+        std::cerr << "Unknown exception caught" << std::endl;
+        return 1;
+    }
+    } catch (const std::exception& e) {
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+        return 1;
+    } catch (...) {
+        std::cerr << "Unknown exception caught" << std::endl;
+        return 1;
+    }
+    } catch (const std::exception& e) {
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+        return 1;
+    } catch (...) {
+        std::cerr << "Unknown exception caught" << std::endl;
+        return 1;
+    }
+    } catch (const std::exception& e) {
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+        return 1;
+    } catch (...) {
+        std::cerr << "Unknown exception caught" << std::endl;
+        return 1;
+    }
+    } catch (const std::exception& e) {
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+        return 1;
+    } catch (...) {
+        std::cerr << "Unknown exception caught" << std::endl;
+        return 1;
+    }
+    } catch (const std::exception& e) {
+        std::cerr << "Exception caught: " << e.what() << std::endl;
+        return 1;
+    } catch (...) {
+        std::cerr << "Unknown exception caught" << std::endl;
+        return 1;
+    }
+        return 1;
+    } catch (...) {
+        std::cerr << "Unknown exception caught" << std::endl;
+        return 1;
+    }

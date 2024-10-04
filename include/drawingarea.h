@@ -5,8 +5,7 @@
 #include <QPainterPath>
 #include <QColor>
 #include <QTimer>
-
-class GcodeGenerator;
+#include "gcodegenerator.h" // Add this line to include the full definition of GcodeGenerator
 
 class DrawingArea : public QWidget
 {
@@ -22,7 +21,7 @@ public:
     void generateSpirographStep(int step);
     bool exportToSVG(const QString &filename) const;
     bool exportToPNG(const QString &filename, int width = 0, int height = 0) const;
-    bool exportToGcode(const QString &filename, const void* config) const;
+    bool exportToGcode(const QString &filename, const GcodeGenerator::Config& config) const;
 
     double calculateTotalPathLength() const;
 

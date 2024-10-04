@@ -1,0 +1,19 @@
+{
+    "defaultStartGcode": [
+        "G21 ; Set units to millimeters",
+        "G90 ; Use absolute coordinates",
+        "G92 X0 Y0 ; Set current position as home"
+    ],
+    "defaultEndGcode": [
+        "G0 X0 Y0 ; Return to home position",
+        "M2 ; End program"
+    ],
+    "defaultPenUpPosition": 3,
+    "defaultPenDownPosition": -1,
+    "defaultTravelSpeed": 5000,
+    "defaultDrawingSpeed": 2500,
+    "defaultMaxSpeed": 5000,
+    "defaultMaxAcceleration": 2500,
+    "defaultDrawingAreaWidth": 150,
+    "defaultDrawingAreaHeight": 150
+}

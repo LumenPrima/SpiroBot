@@ -18,6 +18,8 @@ public:
     GcodeGenerator::Config getConfig() const;
 
 private:
+    void loadConfigurationFromFile();
+
     QDoubleSpinBox *drawingAreaWidthSpinBox;
     QDoubleSpinBox *drawingAreaHeightSpinBox;
     QDoubleSpinBox *maxSpeedSpinBox;

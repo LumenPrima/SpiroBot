@@ -15,51 +15,37 @@
 #include <numeric>
 #include <iostream>
 #include <QDebug>
-#include <stdexcept>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), currentStep(0), totalRotations(0)
 {
-    std::cout << "MainWindow constructor started" << std::endl;
     qDebug() << "MainWindow constructor started";
 
     try {
-        std::cout << "Setting window title" << std::endl;
         qDebug() << "Setting window title";
         setWindowTitle("SpiroBot");
 
-        std::cout << "Resizing window" << std::endl;
         qDebug() << "Resizing window";
         resize(1400, 1200);
 
-        std::cout << "Creating animation timer" << std::endl;
         qDebug() << "Creating animation timer";
         animationTimer = new QTimer(this);
 
-        std::cout << "Connecting animation timer" << std::endl;
         qDebug() << "Connecting animation timer";
         connect(animationTimer, &QTimer::timeout, this, &MainWindow::updateAnimation);
 
-        std::cout << "Calling setupUI" << std::endl;
         qDebug() << "Calling setupUI";
         setupUI();
 
-        std::cout << "MainWindow constructor completed" << std::endl;
         qDebug() << "MainWindow constructor completed";
-    } catch (const std::exception& e) {
-        std::cerr << "Exception in MainWindow constructor: " << e.what() << std::endl;
-        qCritical() << "Exception in MainWindow constructor:" << e.what();
     } catch (...) {
-        std::cerr << "Unknown exception in MainWindow constructor" << std::endl;
-        qCritical() << "Unknown exception in MainWindow constructor";
+        qCritical() << "An unexpected error occurred in MainWindow constructor";
     }
 }
-
 
 MainWindow::~MainWindow()
 {
 }
-
 
 void MainWindow::setupUI()
 {
@@ -205,24 +191,6 @@ void MainWindow::setupUI()
     updateSpirograph();
 }
 
-/*
-void MainWindow::updateSpirograph()
-{
-    drawingArea->setParameters(
-        outerRadiusSlider->value(),
-        innerRadiusSlider->value(),
-        penOffsetSlider->value(),
-        rotationsSpinBox->value(),
-        lineThicknessSpinBox->value(),
-        numPensSpinBox->value(),
-        rotationOffsetSpinBox->value()
-    );
-    drawingArea->generateSpirograph();
-    drawingArea->update();
-    statusLabel->setText("Spirograph updated");
-}
-*/
-
 void MainWindow::exportToSVG()
 {
     QString filename = QFileDialog::getSaveFileName(this, 
@@ -281,8 +249,8 @@ void MainWindow::exportToGcode()
     GcodeExportDialog dialog(this);
     if (dialog.exec() == QDialog::Accepted) {
         GcodeGenerator::Config config = dialog.getConfig();
-        if (drawingArea->exportToGcode(filename, &config)) {  // Pass the address of config
-            statusLabel->setText("Gcode exported successfully");
+        if (drawingArea->exportToGcode(filename, config)) {
+           statusLabel->setText("Gcode exported successfully");
         } else {
             QMessageBox::critical(this, tr("Export Failed"),
                 tr("Failed to export the Gcode file."));
@@ -341,7 +309,6 @@ int MainWindow::calculateRotationsToCloseLoop(int outerRadius, int innerRadius)
     return std::lcm(radiusDifference, innerRadius) / radiusDifference;
 }
 
-// In updateSpirograph():
 void MainWindow::updateSpirograph()
 {
     drawingArea->setParameters(
