@@ -1,4 +1,3 @@
-// In a new file, gcodeexportdialog.h
 #ifndef GCODEEXPORTDIALOG_H
 #define GCODEEXPORTDIALOG_H
 
@@ -7,6 +6,8 @@
 
 class QLineEdit;
 class QDoubleSpinBox;
+class QComboBox;
+class QPlainTextEdit;
 
 class GcodeExportDialog : public QDialog
 {
@@ -25,7 +26,9 @@ private:
     QDoubleSpinBox *penDownPositionSpinBox;
     QDoubleSpinBox *travelSpeedSpinBox;
     QDoubleSpinBox *drawingSpeedSpinBox;
+    QComboBox *originComboBox;
+    QPlainTextEdit *startGcodeEdit;
+    QPlainTextEdit *endGcodeEdit;
 };
-
 
 #endif // GCODEEXPORTDIALOG_H

@@ -9,23 +9,52 @@
 #include <QAction>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <QFileDialog>
 #include <QInputDialog>
-#include <QMessageBox>
 #include <QTimer>
 #include <cmath>
 #include <numeric>
+#include <iostream>
+#include <QDebug>
+#include <stdexcept>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent), currentStep(0), totalRotations(0)
 {
-    setWindowTitle("SpiroBot");
-    resize(1400, 1200);
-    setupUI();
+    std::cout << "MainWindow constructor started" << std::endl;
+    qDebug() << "MainWindow constructor started";
 
-    animationTimer = new QTimer(this);
-    connect(animationTimer, &QTimer::timeout, this, &MainWindow::updateAnimation);
+    try {
+        std::cout << "Setting window title" << std::endl;
+        qDebug() << "Setting window title";
+        setWindowTitle("SpiroBot");
+
+        std::cout << "Resizing window" << std::endl;
+        qDebug() << "Resizing window";
+        resize(1400, 1200);
+
+        std::cout << "Creating animation timer" << std::endl;
+        qDebug() << "Creating animation timer";
+        animationTimer = new QTimer(this);
+
+        std::cout << "Connecting animation timer" << std::endl;
+        qDebug() << "Connecting animation timer";
+        connect(animationTimer, &QTimer::timeout, this, &MainWindow::updateAnimation);
+
+        std::cout << "Calling setupUI" << std::endl;
+        qDebug() << "Calling setupUI";
+        setupUI();
+
+        std::cout << "MainWindow constructor completed" << std::endl;
+        qDebug() << "MainWindow constructor completed";
+    } catch (const std::exception& e) {
+        std::cerr << "Exception in MainWindow constructor: " << e.what() << std::endl;
+        qCritical() << "Exception in MainWindow constructor:" << e.what();
+    } catch (...) {
+        std::cerr << "Unknown exception in MainWindow constructor" << std::endl;
+        qCritical() << "Unknown exception in MainWindow constructor";
+    }
 }
+
 
 MainWindow::~MainWindow()
 {
@@ -120,6 +149,11 @@ void MainWindow::setupUI()
     animateButton = new QPushButton("Animate", this);
     controlsLayout->addWidget(animateButton);
     connect(animateButton, &QPushButton::clicked, this, &MainWindow::on_animateButton_clicked);
+
+    // Add "Animate Gears" button
+    animateGearsButton = new QPushButton("Animate Gears", this);
+    controlsLayout->addWidget(animateGearsButton);
+    connect(animateGearsButton, &QPushButton::clicked, this, &MainWindow::on_animateGearsButton_clicked);
 
     pathLengthLabel = new QLabel("Path Length: N/A", this);
     controlsLayout->addWidget(pathLengthLabel);
@@ -328,4 +362,15 @@ void MainWindow::updateSpirograph()
     
     drawingArea->update();
     statusLabel->setText("Spirograph updated");
+}
+
+void MainWindow::on_animateGearsButton_clicked()
+{
+    if (animateGearsButton->text() == "Animate Gears") {
+        drawingArea->startAnimation();
+        animateGearsButton->setText("Stop Animation");
+    } else {
+        drawingArea->stopAnimation();
+        animateGearsButton->setText("Animate Gears");
+    }
 }

@@ -4,8 +4,8 @@
 #include <QWidget>
 #include <QPainterPath>
 #include <QColor>
+#include <QTimer>
 
-// Forward declaration
 class GcodeGenerator;
 
 class DrawingArea : public QWidget
@@ -19,18 +19,25 @@ public:
     void setParameters(int outerRadius, int innerRadius, int penOffset, int rotations,
                        double lineThickness, int numPens, double rotationOffset);
     void generateSpirograph();
-    void generateSpirographStep(int step);  // New method for incremental drawing
+    void generateSpirographStep(int step);
     bool exportToSVG(const QString &filename) const;
     bool exportToPNG(const QString &filename, int width = 0, int height = 0) const;
     bool exportToGcode(const QString &filename, const void* config) const;
 
     double calculateTotalPathLength() const;
 
+    // New methods for gear visualization
+    void startAnimation();
+    void stopAnimation();
+
 signals:
     void spirographUpdated();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
+
+private slots:
+    void updateAnimation();
 
 private:
     int outerRadius;
@@ -46,10 +53,20 @@ private:
     QRectF boundingBox;
     double zoomFactor;
 
+    // New members for gear visualization
+    QTimer *animationTimer;
+    double currentAngle;
+    bool isAnimating;
+
     void generatePenColors();
     void calculateBoundingBoxAndZoom();
     
-    // Pointer to implementation to hide GcodeGenerator details
+    // New methods for gear visualization
+    void drawGears(QPainter &painter);
+    void drawGear(QPainter &painter, const QPointF &center, double radius, const QColor &color);
+    void drawPenHoles(QPainter &painter);
+    QPointF calculatePenPosition();
+    
     class DrawingAreaPrivate;
     DrawingAreaPrivate* d_ptr;
 };

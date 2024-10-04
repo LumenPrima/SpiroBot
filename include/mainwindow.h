@@ -29,6 +29,7 @@ private slots:
     void updateAnimation();
     void on_closeLoopButton_clicked();
     void on_animateButton_clicked();
+    void on_animateGearsButton_clicked();
 
 private:
     void setupUI();
@@ -49,6 +50,7 @@ private:
     QLabel *penOffsetValueLabel;
     QPushButton *closeLoopButton;
     QPushButton *animateButton;
+    QPushButton *animateGearsButton;
     QTimer *animationTimer;
     int currentStep;
     int totalRotations;

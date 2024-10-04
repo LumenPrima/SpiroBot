@@ -8,6 +8,9 @@
 #include <QTextStream>
 #include <QLineF>
 #include <QtMath>
+#include <iostream>
+#include <QDebug>
+#include <stdexcept>
 
 
 
@@ -22,11 +25,45 @@ public:
 
 DrawingArea::DrawingArea(QWidget *parent)
     : QWidget(parent), outerRadius(100), innerRadius(50), penOffset(25), rotations(5),
-      lineThickness(1.0), numPens(1), rotationOffset(0), d_ptr(new DrawingAreaPrivate())
+      lineThickness(1.0), numPens(1), rotationOffset(0), currentAngle(0), isAnimating(false)
 {
-    setBackgroundRole(QPalette::Base);
-    setAutoFillBackground(true);
-    generatePenColors();
+    std::cout << "DrawingArea constructor started" << std::endl;
+    qDebug() << "DrawingArea constructor started";
+
+    try {
+        std::cout << "Setting background role" << std::endl;
+        qDebug() << "Setting background role";
+        setBackgroundRole(QPalette::Base);
+
+        std::cout << "Setting auto fill background" << std::endl;
+        qDebug() << "Setting auto fill background";
+        setAutoFillBackground(true);
+
+        std::cout << "Generating pen colors" << std::endl;
+        qDebug() << "Generating pen colors";
+        generatePenColors();
+
+        std::cout << "Creating animation timer" << std::endl;
+        qDebug() << "Creating animation timer";
+        animationTimer = new QTimer(this);
+
+        std::cout << "Connecting animation timer" << std::endl;
+        qDebug() << "Connecting animation timer";
+        connect(animationTimer, &QTimer::timeout, this, &DrawingArea::updateAnimation);
+
+        std::cout << "Creating GcodeGenerator" << std::endl;
+        qDebug() << "Creating GcodeGenerator";
+        d_ptr = new DrawingAreaPrivate();
+
+        std::cout << "DrawingArea constructor completed" << std::endl;
+        qDebug() << "DrawingArea constructor completed";
+    } catch (const std::exception& e) {
+        std::cerr << "Exception in DrawingArea constructor: " << e.what() << std::endl;
+        qCritical() << "Exception in DrawingArea constructor:" << e.what();
+    } catch (...) {
+        std::cerr << "Unknown exception in DrawingArea constructor" << std::endl;
+        qCritical() << "Unknown exception in DrawingArea constructor";
+    }
 }
 
 DrawingArea::~DrawingArea()
@@ -154,6 +191,9 @@ void DrawingArea::paintEvent(QPaintEvent *event)
         painter.setPen(QPen(penColors[i], lineThickness / zoomFactor));
         painter.drawPath(spirographPaths[i]);
     }
+
+    // Draw the gears
+    drawGears(painter);
 }
 
 void DrawingArea::generatePenColors()
@@ -260,4 +300,112 @@ void DrawingArea::calculateBoundingBoxAndZoom()
     double widthRatio = width() / boundingBox.width();
     double heightRatio = height() / boundingBox.height();
     zoomFactor = std::min(widthRatio, heightRatio);
+}
+
+void DrawingArea::drawGears(QPainter &painter)
+{
+    painter.save();
+    painter.setRenderHint(QPainter::Antialiasing, true);
+
+    // Draw outer gear
+    drawGear(painter, QPointF(0, 0), outerRadius, Qt::black);
+
+    // Calculate inner gear position
+    double x = (outerRadius - innerRadius) * qCos(currentAngle);
+    double y = (outerRadius - innerRadius) * qSin(currentAngle);
+    QPointF innerGearCenter(x, y);
+
+    // Draw inner gear
+    painter.save();
+    painter.translate(innerGearCenter);
+    painter.rotate(currentAngle * outerRadius / innerRadius * 180 / M_PI);
+    drawGear(painter, QPointF(0, 0), innerRadius, Qt::black);
+
+    // Draw pen holes
+    drawPenHoles(painter);
+
+    painter.restore();
+
+    // Draw arm connecting the gears
+    //painter.setPen(QPen(Qt::black, 2 / zoomFactor));
+    //painter.drawLine(QPointF(0, 0), innerGearCenter);
+
+    // Draw current pen position
+    QPointF penPosition = calculatePenPosition();
+    painter.setBrush(Qt::red);
+    painter.drawEllipse(penPosition, 3 / zoomFactor, 3 / zoomFactor);
+
+    painter.restore();
+}
+
+void DrawingArea::drawGear(QPainter &painter, const QPointF &center, double radius, const QColor &color)
+{
+    painter.save();
+    painter.translate(center);
+
+    QPen gearPen(color);
+    gearPen.setWidthF(2 / zoomFactor);
+    painter.setPen(gearPen);
+    painter.setBrush(Qt::NoBrush);
+
+    // Draw the main circle of the gear
+    painter.drawEllipse(QPointF(0, 0), radius, radius);
+
+    // Draw center circle
+    double centerRadius = radius * 0.1;
+    painter.drawEllipse(QPointF(0, 0), centerRadius, centerRadius);
+
+    painter.restore();
+}
+
+void DrawingArea::drawPenHoles(QPainter &painter)
+{
+    int holeCount = 8;  // Number of pen holes
+    double holeRadius = innerRadius * 0.05;  // Size of the holes
+
+    QPen holePen(Qt::black);
+    holePen.setWidthF(1 / zoomFactor);
+    painter.setPen(holePen);
+    painter.setBrush(Qt::NoBrush);
+
+    // Highlight the current pen hole
+    //QPointF currentHole(penOffset, 0);
+    //painter.setBrush(Qt::red);
+    //painter.drawEllipse(currentHole, holeRadius, holeRadius);
+}
+
+QPointF DrawingArea::calculatePenPosition()
+{
+    double t = currentAngle;
+    double x = (outerRadius - innerRadius) * qCos(t) + 
+               penOffset * qCos(((outerRadius - innerRadius) * t / innerRadius) + rotationOffset);
+    double y = (outerRadius - innerRadius) * qSin(t) - 
+               penOffset * qSin(((outerRadius - innerRadius) * t / innerRadius) + rotationOffset);
+    return QPointF(x, y);
+}
+
+void DrawingArea::startAnimation()
+{
+    if (!isAnimating) {
+        isAnimating = true;
+        currentAngle = 0;
+        animationTimer->start(50);  // 20 FPS
+    }
+}
+
+void DrawingArea::stopAnimation()
+{
+    if (isAnimating) {
+        isAnimating = false;
+        animationTimer->stop();
+    }
+}
+
+void DrawingArea::updateAnimation()
+{
+    currentAngle += 0.05;  // Adjust this value to change the animation speed
+    if (currentAngle >= 2 * M_PI * rotations) {
+        stopAnimation();
+    }
+    update();
 }
